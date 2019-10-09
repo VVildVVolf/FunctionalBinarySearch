@@ -1,10 +1,19 @@
-
 data Tree a = Tree (Tree a) a (Tree a) | Empty deriving Show
+data Comparator = Less | Bigger | Success
 
+search :: Tree a -> (a -> Comparator) -> Maybe a
+search Empty _ = Nothing
+search (Tree left val right) f = case f val of
+    Success -> Just val
+    Less -> search left f
+    _ -> search right f
+
+treeToStr :: (Show a) => Tree a -> String
 treeToStr tr = treeToStr' 0 tr where
     treeToStr' _ Empty = ""
     treeToStr' n (Tree a b c) = (treeToStr' (succ n) c) ++ (concat $ replicate n "    ") ++ (show b) ++ "\n" ++ (treeToStr' (succ n) a)
 
+fromList :: [a] -> Tree a
 fromList list = createTreeUntilPossible 0 (Empty, list) where
     createTree _ [] = (Empty, [])
     createTree 0 xs = (Empty, xs)
